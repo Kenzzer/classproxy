@@ -50,7 +50,7 @@ void ClassProxy_m_iClass_Fn(const SendProp* pProp, const void* pStructBase, cons
 {
 	if (0 < objectID && objectID <= 33)
 	{
-		std::int32_t classValue = g_playerClass[objectID];
+		std::int32_t classValue = g_playerClass[objectID].load(std::memory_order_relaxed);
 		if (classValue != 0)
 		{
 			g_Ext.m_iClass_Proxy(pProp, pStructBase, &classValue, pOut, iElement, objectID);
@@ -71,7 +71,7 @@ cell_t ClassProxy_m_iClass_Set(IPluginContext* pContext, const cell_t* params)
 	{
 		return pContext->ThrowNativeError("Client (%i) isn't in game!", params[1]);
 	}
-	g_playerClass[params[1]] = params[2];
+	g_playerClass[params[1]].store(params[2], std::memory_order_relaxed);
 	return 0;
 }
 
